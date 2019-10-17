@@ -18,13 +18,24 @@ def rmse(logits,labels):
     '''
     return np.sqrt(mse(logits=logits,labels=labels))
 
+def var(labels):
+    '''
+    labels都是一维numpy数组。对数组里的值求方差。
+    '''
+    aver=np.mean(labels)
+    return np.mean(np.square(labels-aver))
+
 def r_squared(mse,var):
     assert var>=1e-12
     return 1-mse/var
     
 
 if __name__=="__main__":
-    a=np.array([3,10,11])
-    b=np.array([2,4,10])
-    print(rmse(a,b))
+    a=np.array([0,4,10])
+    b=np.array([0,0,9])
+    m=mse(a,b)
+    rm=rmse(a,b)
+    v=var(b)
+    rs=r_squared(m,v)
+    print(m,rm,v,rs)
     pass
