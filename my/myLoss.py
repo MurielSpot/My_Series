@@ -28,7 +28,17 @@ def var(labels):
 def r_squared(mse,var):
     assert var>=1e-12
     return 1-mse/var
-    
+
+def F1():
+    raise NotImplementedError()
+
+def acc():
+    raise NotImplementedError()
+
+def rec():
+    raise NotImplementedError()
+
+
 
 if __name__=="__main__":
     a=np.array([0,4,10])
