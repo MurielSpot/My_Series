@@ -8,6 +8,14 @@ import copy
 import numpy as np
 from collections import OrderedDict
 
+def new_dir(dir1,dir2):
+    '''将dir2文件夹建立在dir1中'''
+    assert os.path.exists(dir1)
+    tmp=os.path.join(dir1,dir2)
+    if not os.path.exists(tmp):
+        os.mkdir(tmp)
+    return
+
 def file_readlines(path):
     with open(path,"r",encoding="utf-8") as f:
         txt=f.readlines()
@@ -276,6 +284,7 @@ def write_log(str,path):
     return
     
 if __name__=="__main__":
-    res={1:[1,2],-1:[2,3]}
-    print(sortk_dict(res)[-1])
+    #res={1:[1,2],-1:[2,3]}
+    #print(sortk_dict(res)[-1])
+    new_dir("./__pycache__/","./data")
     pass

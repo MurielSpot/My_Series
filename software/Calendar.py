@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-class Perpetual_calender(object):
+class PerpetualCalender(object):
     def __init__(self):
         pass
     
@@ -31,7 +31,7 @@ class Perpetual_calender(object):
         else:
             return False
 
-class Perpetual_calender_abs(Perpetual_calender):
+class PerpetualCalenderAbs(PerpetualCalender):
     def __init__(self):
         self.abs_day_begin={"year":2000,"month":1,"day":1,"week":6}
     
@@ -107,7 +107,7 @@ class Perpetual_calender_abs(Perpetual_calender):
         day=remaining_days+1
         return year,month,day
 
-class Perpetual_calender_ymd(Perpetual_calender):
+class PerpetualCalenderYmd(PerpetualCalender):
     def __init__(self):
         self.abs_day_begin={"year":2000,"month":1,"day":1,"week":6}#这个日期不能随便改，因为还没有代码目前还不能根据这个日期的变化，自动计算出正确的变化结果
     
@@ -163,7 +163,7 @@ class Perpetual_calender_ymd(Perpetual_calender):
         return week
 
 def test_calender():
-    ymd=Perpetual_calender_ymd()
+    ymd=PerpetualCalenderYmd()
     ymd.show_month_calender(int(input("year:").strip()),int(input("month:").strip()),int(input("day:").strip()))
     
 if __name__ == "__main__":
