@@ -3,6 +3,11 @@
 
 import tensorflow as tf
 
+## fully connected ###############################################
+def fully_connected(inputs,units,activation,use_bias=True,scope=None):
+    with tf.variable_scope(scope or "fully_connected"):
+        return tf.layers.dense(inputs,units,activation=activation,use_bias=use_bias)
+
 ## cnn ###########################################################
 def sentence_conv(inputs,filter_height,filter_num,strides=[1,1,1,1],padding="VALID",is_train=None,scope=None):
     '''
@@ -68,9 +73,18 @@ def sentence_birnn():
 def sentence_multi_birnn():
     raise NotImplementedError()
 
+def dropout(cell,output_keep_prob,dtype="float32"):
+    if output_keep_prob<1.0:
+        cell=tf.nn.rnn_cell.DropoutWrapper(cell,input_keep_prob=1.0,\
+            output_keep_prob=output_keep_prob,state_keep_prob=1.0,dtype=dtype)
+    return cell
+
 def lstmCell(units,dtype="float32"):
-    return tf.keras.layers.LSTMCell(units=units,dtype=dtype,)
-    #return tf.nn.rnn_cell.LSTMCell(num_units=num_units,dtype=dtype)
+    #return tf.keras.layers.LSTMCell(units=units,dtype=dtype)
+    return tf.nn.rnn_cell.LSTMCell(num_units=units,dtype=dtype)
+
+def multi_rnn_cell(cells_list,scope=None):
+    return tf.nn.rnn_cell.MultiRNNCell(cells_list,state_is_tuple=True)
 
 def unirnn(cell,inputs,sequence_length=None,initial_state=None,dtype="float32",time_major=False,scope=None):
     '''
@@ -110,6 +124,7 @@ def attention(inputs,is_train=None):
     print(outputs.shape)
     return tf.reduce_max(outputs,axis=[-2])
 
+## math ####################################################3
 def cos_tensor(a,b):
     '''
     两个张量求余弦值，对两者的最后一维一一对应求余弦。
@@ -135,18 +150,43 @@ def cos_tensor(a,b):
     cos=tf.clip_by_value(cos,-0.99999,0.99999)
     return cos
 
+## loss ######################################################3
+def mse(labels,logits):
+    return tf.square(labels-logits)
 
-if __name__ == "__main__":
-    #x=tf.truncated_normal([3,4,5])
-    #a=tf.Variable([[[[2,2],[0,0]],[[2,3],[0,1]]]],dtype="float32")
-    #b=tf.Variable([[[[-2,-2],[1,0]],[[0,0],[-1,0]]]],dtype="float32")
+def rmse(labels,logits):
+    raise NotImplementedError()
+
+def exam_multi_layer_rnn():
     x=tf.truncated_normal([2,3,3],dtype="float32")
-    cell=lstmCell(6)
-    outputs,state=unirnn(cell,x)
-    
+    #y=tf.truncated_normal([2,6],dtype="float32")
+    lstm_cell_1=lstmCell(6)
+    lstm_cell_2=lstmCell(7)
+    cell=multi_rnn_cell([lstm_cell_1,lstm_cell_2])
+    state=cell.zero_state(batch_size=2,dtype="float32")
+    outputs=[]
+    for time_step in range(3):
+        output,state=cell(x[:,time_step,:],state,scope=None)
+        outputs.append(output)
+    # output,state=cell(y,state,scope=None)
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        o1,o2=sess.run([outputs,state])
-        print(o1,o1.shape)
-        print(o2)
+        o1,o2=sess.run([state,outputs])
+        print(o1,len(state))#输出的是两个batch的c和h
+        print(outputs,len(outputs))#输出的是每次输入对应的输出，共三个，每个输入大小为(2,3)，输出大小为(2,7)。
+
+if __name__ == "__main__":
+    x=tf.truncated_normal([5,3,3],dtype="float32")
+    #y=tf.truncated_normal([2,6],dtype="float32")
+    lstm_cell_1=lstmCell(6)
+    lstm_cell_2=lstmCell(7)
+    cell=multi_rnn_cell([lstm_cell_1,lstm_cell_2])
+    state=cell.zero_state(batch_size=5,dtype="float32")
+    outputs,state=tf.nn.dynamic_rnn(cell,x,initial_state=state,time_major=False)#time_major=False:[batch_size,max_time,depth]
+    concat_op=tf.concat([state[-1][-1],state[-1][-1]],axis=1)
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        o1,o2=sess.run([state,concat_op])
+        print(o1,len(state))#输出的是两个batch的c和h
+        print(concat_op,concat_op.shape)#输出的是每次输入对应的输出，共三个，每个输入大小为(2,3)，输出大小为(2,7)。
     pass

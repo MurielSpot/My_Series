@@ -5,8 +5,36 @@ import os
 import re
 import json
 import copy
+import time
+import datetime
 import numpy as np
 from collections import OrderedDict
+
+def week(date,pattern,add_days=None):
+    if add_days is not None:
+        d=datetime.datetime.strptime(date,pattern)+datetime.timedelta(days=add_days)
+    else:
+        d=datetime.datetime.strptime(date,pattern)
+    return d.weekday()+1
+
+def date_diff(date1,date2,pattern="%Y-%m-%d"):
+    '''返回date2-date1的日期差'''
+    d1=time.strptime(date1,pattern)
+    d2=time.strptime(date2,pattern)
+    #根据上面需要计算日期还是日期时间，来确定需要几个数组段。下标0表示年，小标1表示月，依次类推...  
+    #date1=datetime.datetime(date1[0],date1[1],date1[2],date1[3],date1[4],date1[5])  
+    #date2=datetime.datetime(date2[0],date2[1],date2[2],date2[3],date2[4],date2[5])  
+    d1=datetime.datetime(d1[0],d1[1],d1[2])  
+    d2=datetime.datetime(d2[0],d2[1],d2[2])
+    diff=str(d2-d1).split(" ")
+    if len(diff)==3 and diff[1][:3]=="day":
+        diff=int(diff[0])
+    elif len(diff)==1 and diff[0]=="0:00:00":
+        diff=0
+    else:
+        print(diff)
+        raise ValueError
+    return diff
 
 def new_dir(dir1,dir2):
     '''将dir2文件夹建立在dir1中'''
@@ -100,13 +128,6 @@ def get_text_from_file(path):
     with open(path,"r",encoding="utf-8") as f:
         res=f.read()
     return res
-
-def write_into_log(s,keyword="",log_path=""):
-    if log_path:
-        with open(log_path,"a",encoding="utf-8") as f:
-            if keyword:
-                f.write("\n---------------"+keyword+"---------------\n")
-            f.write(s+"\n")
             
 def reverse_dict(d):
     '''
@@ -277,14 +298,18 @@ def write_dict_into_file_str2int(d,path,sep=" ",sort=False,reverse=False):
             for k,v in d.items():
                 f.write(str(k)+"\t"+str(v)+"\n")
     return
-    
-def write_log(str,path):
-    with open(path,"a",encoding="utf-8") as f:
-        f.write(str+"\n")
+
+def write_log(txt,log_path,note=""):
+    with open(log_path,"a",encoding="utf-8") as f:
+        if note:
+            f.write(note+"\n")
+        f.write(txt+"\n")
     return
     
 if __name__=="__main__":
     #res={1:[1,2],-1:[2,3]}
     #print(sortk_dict(res)[-1])
-    new_dir("./__pycache__/","./data")
+    a=date_diff("2019-10-11","2019-10-1")
+    #a=week("2019-11-10",pattern="%Y-%m-%d",add_days=8)
+    print(a)
     pass
