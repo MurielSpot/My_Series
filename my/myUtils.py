@@ -10,6 +10,9 @@ import datetime
 import numpy as np
 from collections import OrderedDict
 
+def now_time():
+    return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 def week(date,pattern,add_days=None):
     if add_days is not None:
         d=datetime.datetime.strptime(date,pattern)+datetime.timedelta(days=add_days)
