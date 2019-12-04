@@ -173,7 +173,7 @@ def exam_multi_layer_rnn():
         sess.run(tf.global_variables_initializer())
         o1,o2=sess.run([state,outputs])
         print(o1,len(state))#输出的是两个batch的c和h
-        print(outputs,len(outputs))#输出的是每次输入对应的输出，共三个，每个输入大小为(2,3)，输出大小为(2,7)。
+        print(o2,len(outputs))#输出的是每次输入对应的输出，共三个，每个输入大小为(2,3)，输出大小为(2,7)。
 
 if __name__ == "__main__":
     x=tf.truncated_normal([5,3,3],dtype="float32")
