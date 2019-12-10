@@ -29,4 +29,8 @@ def exam_1(data,add_data):
     return
 
 if __name__ == "__main__":
+    df=pd.DataFrame({1:[1,2,3],2:[2,2,2],3:[3,4,5]},columns=[1,2,3])
+    print(df)
+    df=df.drop([1],axis=1)
+    print(df.values)
     pass
